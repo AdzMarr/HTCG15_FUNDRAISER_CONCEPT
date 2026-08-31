@@ -1,0 +1,866 @@
+<!-- Chosen Palette: Red, Charcoal, Off-White, Gold Accent -->
+<!-- Application Structure Plan: Designed as an interactive single-page presentation dashboard for GitHub Pages hosting. Leads with an energetic hero section and high-level metrics, transitions into core purpose/objectives, features a live interactive £3,000 target scenario visualizer, presents the 4 fundraising initiatives with responsive Chart.js canvas visualizations and tier pricing cards, details the sponsor ROI lifecycle, and concludes with an interactive partner pledge form and mobile-friendly navigation. -->
+<!-- Visualization & Content Choices: 
+1. Target Fund Allocation -> Donut Chart (Chart.js) -> Canvas container with tooltips -> Illustrates responsible budgeting (£1.2k jackets, £1k kits, £500 gear, £300 trips).
+2. Scratch Card vs Business Card -> Bar Chart (Chart.js) -> Canvas container -> Highlights £50 business card superiority over £2 family cards.
+3. Partnership Tiers -> Grouped Bar Chart (Chart.js) -> Canvas container -> Multi-tier pricing comparisons across 3, 6, and 12-month commitments.
+4. Car Boot Event Revenue -> Horizontal Bar Chart (Chart.js) -> Canvas container -> Revenue breakdown accumulating to £2,800.
+5. Interactive Goal Visualizer -> Dynamic JS logic & range sliders -> Real-time total progress calculation.
+6. Mobile Navigation -> Toggle JS logic -> Responsive navigation for all device screens.
+NO SVG OR MERMAID JS USED. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Holytown Colts Girls 2015s | Strategic Sponsorship Plan</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Montserrat', sans-serif;
+    }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 320px;
+      max-height: 400px;
+    }
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 360px;
+      }
+    }
+    .diagonal-stripes {
+      background-image: repeating-linear-gradient(45deg, rgba(220, 38, 38, 0.03), rgba(220, 38, 38, 0.03) 10px, transparent 10px, transparent 20px);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased selection:bg-red-600 selection:text-white">
+
+  <!-- Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 rounded-full bg-red-600 border-2 border-amber-400 flex items-center justify-center font-black text-xl text-white shadow-md">
+          ⚽
+        </div>
+        <div>
+          <span class="block text-xs font-extrabold uppercase tracking-widest text-red-600">Holytown Colts G2015s</span>
+          <span class="block text-lg font-black text-slate-900 leading-tight">SPONSORSHIP PLAN</span>
+        </div>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center space-x-6 text-xs font-bold uppercase tracking-wider text-slate-600">
+        <a href="#overview" class="hover:text-red-600 transition-colors">Overview</a>
+        <a href="#purpose" class="hover:text-red-600 transition-colors">Purpose</a>
+        <a href="#calculator" class="hover:text-red-600 transition-colors">Calculator</a>
+        <a href="#gameplan" class="hover:text-red-600 transition-colors">Game Plan</a>
+        <a href="#tiers" class="hover:text-red-600 transition-colors">Partnerships</a>
+        <a href="#roi" class="hover:text-red-600 transition-colors">Sponsor ROI</a>
+        <a href="#action" class="hover:text-red-600 transition-colors">Next Steps</a>
+      </nav>
+
+      <div class="flex items-center space-x-3">
+        <a href="#action" class="hidden sm:inline-block bg-red-600 hover:bg-red-700 text-white font-extrabold px-5 py-2.5 rounded-lg shadow-md hover:shadow-red-600/20 transition-all text-xs uppercase tracking-wider">
+          Become A Partner
+        </a>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobileMenuBtn" aria-label="Toggle Navigation Menu" class="md:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 focus:outline-none">
+          <span class="text-xl leading-none">☰</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-3 text-xs font-bold uppercase tracking-wider text-slate-700">
+      <a href="#overview" class="block py-2 border-b border-slate-100 hover:text-red-600">Overview</a>
+      <a href="#purpose" class="block py-2 border-b border-slate-100 hover:text-red-600">Purpose</a>
+      <a href="#calculator" class="block py-2 border-b border-slate-100 hover:text-red-600">Calculator</a>
+      <a href="#gameplan" class="block py-2 border-b border-slate-100 hover:text-red-600">Game Plan</a>
+      <a href="#tiers" class="block py-2 border-b border-slate-100 hover:text-red-600">Partnerships</a>
+      <a href="#roi" class="block py-2 border-b border-slate-100 hover:text-red-600">Sponsor ROI</a>
+      <a href="#action" class="block py-2 text-red-600 font-extrabold">Become A Partner →</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="overview" class="relative bg-white border-b border-slate-200 py-16 lg:py-24 overflow-hidden diagonal-stripes">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="inline-flex items-center space-x-2 bg-red-50 border border-red-200 text-red-700 px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-widest mb-6">
+        <span>🏆 Grassroots Development Initiative</span>
+      </div>
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-slate-900 uppercase tracking-tight leading-none mb-6">
+        Support Our Team <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-amber-500 to-red-700">Build Your Business</span>
+      </h1>
+      <p class="max-w-3xl text-lg sm:text-xl text-slate-600 mb-10 leading-relaxed font-normal">
+        A strategic, mutually beneficial sponsorship framework designed for the Holytown Colts Girls 2015s. Securing essential weather-proof gear and life skills while connecting local businesses to over 200 engaged families.
+      </p>
+
+      <!-- Metric Highlights -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-xl p-5 shadow-sm">
+          <div class="text-xs uppercase font-extrabold text-slate-500 mb-1">Target Revenue</div>
+          <div class="text-3xl sm:text-4xl font-black text-red-600 mb-1">£3,000</div>
+          <div class="text-xs text-slate-600">Fully kits out team & sidelines</div>
+        </div>
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-xl p-5 shadow-sm">
+          <div class="text-xs uppercase font-extrabold text-slate-500 mb-1">Audience Reach</div>
+          <div class="text-3xl sm:text-4xl font-black text-slate-900 mb-1">200+</div>
+          <div class="text-xs text-slate-600">Local families & business contacts</div>
+        </div>
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-xl p-5 shadow-sm">
+          <div class="text-xs uppercase font-extrabold text-slate-500 mb-1">Core Initiatives</div>
+          <div class="text-3xl sm:text-4xl font-black text-amber-600 mb-1">4 Ways</div>
+          <div class="text-xs text-slate-600">Zero extra pressure on parent pockets</div>
+        </div>
+        <div class="bg-slate-900 text-white rounded-xl p-5 shadow-md">
+          <div class="text-xs uppercase font-extrabold text-amber-400 mb-1">Tax Incentive</div>
+          <div class="text-3xl sm:text-4xl font-black text-white mb-1">100%</div>
+          <div class="text-xs text-slate-300">Deductible business ad expense</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 1: Purpose & Objectives -->
+  <section id="purpose" class="py-16 bg-slate-50 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-12">
+        <span class="text-red-600 text-xs font-black uppercase tracking-widest">Sustaining Our Future</span>
+        <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-1 mb-4">Empowering Players, Protecting Families</h2>
+        <p class="text-slate-600 leading-relaxed text-sm sm:text-base">
+          This section details why our fundraising model shifts focus toward corporate partnerships. As pitch fees, equipment costs, and league registration rise annually, relying solely on family donations is unsustainable during a cost-of-living crisis. Our aim is to build strong relationships with local businesses to cover essential equipment and enrich player growth without burdening households.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-7 space-y-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-2xl font-bold shrink-0">
+              🛡️
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">Weather-Proofing the Team</h3>
+              <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+                Playing winter football in Scotland means facing sub-zero temperatures, sleet, and rain. Securing £3,000 ensures every girl gets high-spec winter sideline jackets, keeping substitutes warm, healthy, and focused.
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl font-bold shrink-0">
+              💬
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">Building Life Skills & Confidence</h3>
+              <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+                Football is our vehicle for personal growth. By actively engaging players in outreach, presentation, and digital media creation, we build leadership, teamwork, communication, and resilience off the pitch.
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-red-600 text-white p-6 rounded-2xl shadow-lg">
+            <div class="text-xs font-extrabold uppercase tracking-widest text-amber-300 mb-1">Mission Statement</div>
+            <p class="text-sm font-bold leading-relaxed">
+              "We want to keep the team financially healthy so the girls always have the right kit and get to enjoy experiences that help them develop into confident young leaders."
+            </p>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-extrabold text-slate-900 text-base">Target Fund Allocation</h3>
+            <span class="text-xs text-red-600 font-bold bg-red-50 border border-red-200 px-3 py-1 rounded-full">£3,000 Budget</span>
+          </div>
+          <p class="text-xs text-slate-500 mb-6">
+            Visual breakdown of how the £3,000 fundraising goal will be distributed across essential team requirements.
+          </p>
+          <div class="chart-container">
+            <canvas id="fundAllocationChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Dynamic Target Calculator -->
+  <section id="calculator" class="py-16 bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <span class="text-red-600 text-xs font-black uppercase tracking-widest">Interactive Target Visualizer</span>
+        <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-1 mb-3 uppercase">Model Our Path To £3,000</h2>
+        <p class="text-slate-600 text-sm sm:text-base">
+          This interactive tool allows coaches, parents, and sponsors to simulate how our four fundraising initiatives combine to achieve and exceed our £3,000 seasonal goal. Adjust the controls below to test different scenarios.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <!-- Sliders Column -->
+        <div class="lg:col-span-7 bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-6">
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="font-bold text-slate-800 text-xs sm:text-sm">1. Business Football Cards Sold (£50/team)</label>
+              <span id="cardCountVal" class="text-red-600 font-extrabold text-sm">20 teams (£1,000)</span>
+            </div>
+            <input id="cardSlider" type="range" min="0" max="40" value="20" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-red-600">
+            <p class="text-xs text-slate-500 mt-1">20 teams = 1 fully sponsored winter jacket package winner.</p>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="font-bold text-slate-800 text-xs sm:text-sm">2. Business Partnerships Secured (Avg £300/tier)</label>
+              <span id="tierCountVal" class="text-amber-600 font-extrabold text-sm">3 packages (£900)</span>
+            </div>
+            <input id="tierSlider" type="range" min="0" max="10" value="3" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500">
+            <p class="text-xs text-slate-500 mt-1">Spans Crafters (£50+), Retail (£90+), and High Value Services (£350+).</p>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="font-bold text-slate-800 text-xs sm:text-sm">3. Household Utility Switches (£150 referral each)</label>
+              <span id="uwCountVal" class="text-red-600 font-extrabold text-sm">4 switches (£600)</span>
+            </div>
+            <input id="uwSlider" type="range" min="0" max="15" value="4" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-red-600">
+            <p class="text-xs text-slate-500 mt-1">Utility Warehouse connector switches completed by supporters.</p>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="font-bold text-slate-800 text-xs sm:text-sm">4. Team Car Boot Sale Event</label>
+              <span id="carBootVal" class="text-amber-600 font-extrabold text-sm">Yes (£2,500 net)</span>
+            </div>
+            <div class="flex items-center space-x-4">
+              <button id="carBootBtn" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition-colors shadow-sm">
+                Toggle Event (On / Off)
+              </button>
+              <span class="text-xs text-slate-500">Includes pitch fees, admission, and raffles.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Output Calculation Card -->
+        <div class="lg:col-span-5 bg-slate-900 text-white rounded-2xl p-6 sm:p-8 flex flex-col justify-between h-full shadow-xl">
+          <div>
+            <span class="text-xs font-black uppercase tracking-widest text-amber-400">Projected Total Raised</span>
+            <div id="totalCalcDisplay" class="text-5xl font-black text-white my-3">£5,000</div>
+            
+            <div class="w-full bg-slate-800 rounded-full h-4 mb-4 overflow-hidden p-0.5 border border-slate-700">
+              <div id="calcProgressBar" class="bg-gradient-to-r from-red-500 via-amber-400 to-emerald-400 h-3 rounded-full transition-all duration-300" style="width: 100%;"></div>
+            </div>
+            
+            <div id="calcStatusText" class="text-xs font-bold text-emerald-400 leading-relaxed bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+              🎉 Target Achieved! £2,000 surplus generated for extra player tournaments & trips!
+            </div>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-slate-800 text-xs text-slate-300 space-y-2">
+            <div class="flex justify-between">
+              <span>Goal Baseline Target:</span>
+              <span class="text-white font-bold">£3,000</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Winter Kit Expenses Covered:</span>
+              <span id="calcJacketsCovered" class="text-emerald-400 font-bold">100% Guaranteed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: The Game Plan (Four Ways To Win) -->
+  <section id="gameplan" class="py-16 bg-slate-50 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-red-600 text-xs font-black uppercase tracking-widest">Four Core Streams</span>
+        <h2 class="text-3xl sm:text-5xl font-black text-slate-900 mt-1 mb-4 uppercase">The Game Plan</h2>
+        <p class="text-slate-600 text-sm sm:text-base">
+          This section details our four structured initiatives. Each plan is designed to provide clear, tangible commercial value to local businesses while ensuring parents face no compulsory fundraising burdens.
+        </p>
+      </div>
+
+      <!-- Initiative 1 & 2 Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <!-- Initiative 1 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="bg-red-100 text-red-700 border border-red-200 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider">Initiative 01</span>
+              <span class="text-slate-900 text-sm font-black">Target: £1,000</span>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-3">1. The Business Football Card</h3>
+            <p class="text-slate-600 text-xs sm:text-sm mb-6 leading-relaxed">
+              We replace traditional £2 family scratch cards (where parents end up buying remaining squares) with a B2B model. Players approach local businesses to buy a square for £50.
+            </p>
+            
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 space-y-2">
+              <div class="text-xs font-bold text-red-600 uppercase">The Business Reward</div>
+              <p class="text-xs text-slate-600">
+                The winning business receives official kit sponsorship—placing their brand logo prominently on the girls' essential winter gear, alongside social media features and photo ops.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-500 mb-2 text-center">Revenue Comparison: Family vs Business Card</div>
+            <div class="chart-container">
+              <canvas id="scratchCardChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Initiative 2 -->
+        <div id="tiers" class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="bg-amber-100 text-amber-800 border border-amber-200 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider">Initiative 02</span>
+              <span class="text-slate-900 text-sm font-black">Target: £900 – £2,000</span>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-3">2. The Partnership Programme</h3>
+            <p class="text-slate-600 text-xs sm:text-sm mb-6 leading-relaxed">
+              A structured multi-tier sponsorship model offering local businesses direct advertising exposure to over 200 local families and friends through simple, predictable flat-rate packages.
+            </p>
+            
+            <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl mb-6">
+              <div class="text-xs font-bold text-emerald-800 uppercase mb-1">💡 Tax-Deductible Advertising</div>
+              <p class="text-xs text-emerald-700">
+                Sponsorship payments for advertising are legitimate business expenses and can be 100% tax-deductible against company profits.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-500 mb-2 text-center">Pricing Overview Across Tiers & Durations</div>
+            <div class="chart-container">
+              <canvas id="partnershipTierChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Partnership Tier Pricing Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <!-- Tier 1 -->
+        <div class="bg-white border-2 border-slate-200 rounded-2xl p-6 shadow-sm hover:border-red-500 transition-colors">
+          <div class="text-xs font-extrabold uppercase tracking-widest text-red-600 mb-1">Tier 1: Small Businesses</div>
+          <h4 class="text-xl font-black text-slate-900 mb-2">Crafters & Startups</h4>
+          <p class="text-xs text-slate-600 mb-4 leading-relaxed">Tailored for local crafters, sole traders, or new ventures looking for community visibility.</p>
+          <div class="space-y-2 text-xs font-bold text-slate-800 bg-slate-50 p-4 rounded-xl">
+            <div class="flex justify-between border-b border-slate-200 pb-1"><span>3 Months Plan</span><span class="text-red-600">£50</span></div>
+            <div class="flex justify-between border-b border-slate-200 pb-1"><span>6 Months Plan</span><span class="text-red-600">£90</span></div>
+            <div class="flex justify-between"><span>12 Months Plan</span><span class="text-red-600">£175</span></div>
+          </div>
+        </div>
+
+        <!-- Tier 2 -->
+        <div class="bg-slate-900 text-white border-2 border-slate-900 rounded-2xl p-6 shadow-md">
+          <div class="text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-1">Tier 2: Retail & Trades</div>
+          <h4 class="text-xl font-black text-white mb-2">Local & Retail Stores</h4>
+          <p class="text-xs text-slate-300 mb-4 leading-relaxed">Ideal for garages, cafes, salons, and takeaways wanting seasonal promotional reach.</p>
+          <div class="space-y-2 text-xs font-bold text-slate-200 bg-slate-800 p-4 rounded-xl">
+            <div class="flex justify-between border-b border-slate-700 pb-1"><span>3 Months Plan</span><span class="text-amber-400">£90</span></div>
+            <div class="flex justify-between border-b border-slate-700 pb-1"><span>6 Months Plan</span><span class="text-amber-400">£250</span></div>
+            <div class="flex justify-between"><span>12 Months Plan</span><span class="text-amber-400">£450</span></div>
+          </div>
+        </div>
+
+        <!-- Tier 3 -->
+        <div class="bg-white border-2 border-amber-400 rounded-2xl p-6 shadow-sm hover:border-amber-500 transition-colors">
+          <div class="text-xs font-extrabold uppercase tracking-widest text-amber-600 mb-1">Tier 3: Enterprise Services</div>
+          <h4 class="text-xl font-black text-slate-900 mb-2">High Value Services</h4>
+          <p class="text-xs text-slate-600 mb-4 leading-relaxed">Designed for financial services, real estate, recruitment, and property developers.</p>
+          <div class="space-y-2 text-xs font-bold text-slate-800 bg-amber-50 p-4 rounded-xl">
+            <div class="flex justify-between border-b border-amber-200 pb-1"><span>3 Months Plan</span><span class="text-amber-700">£350</span></div>
+            <div class="flex justify-between border-b border-amber-200 pb-1"><span>6 Months Plan</span><span class="text-amber-700">£600</span></div>
+            <div class="flex justify-between"><span>12 Months Plan</span><span class="text-amber-700">£1,000</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Initiative 3 & 4 Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Initiative 3 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <span class="bg-red-100 text-red-700 border border-red-200 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider">Initiative 03</span>
+            <span class="text-emerald-700 text-sm font-black">Up to £150 / Switch</span>
+          </div>
+          <h3 class="text-2xl font-black text-slate-900 mb-3">3. The UW Connector</h3>
+          <p class="text-slate-600 text-xs sm:text-sm mb-6 leading-relaxed">
+            Generate funds while saving money at home. By completing a quick household utility review and bundling services through Utility Warehouse, families reduce monthly bills—and up to £150 per referral goes directly into the team account.
+          </p>
+          <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3 text-xs">
+            <div class="flex justify-between border-b border-slate-200 pb-2">
+              <span class="text-slate-600">Family Utility Benefit:</span>
+              <span class="text-slate-900 font-bold">Reduces household monthly expenditure</span>
+            </div>
+            <div class="flex justify-between border-b border-slate-200 pb-2">
+              <span class="text-slate-600">Club Referral Payout:</span>
+              <span class="text-emerald-700 font-extrabold">Up to £150 per switch</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-600">10 Switch Potential:</span>
+              <span class="text-red-600 font-black">£1,500 injected into team fund</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Initiative 4 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="bg-amber-100 text-amber-800 border border-amber-200 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider">Initiative 04</span>
+              <span class="text-slate-900 text-sm font-black">Target: £2,500+ Single Day</span>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-3">4. Team Car Boot Sale</h3>
+            <p class="text-slate-600 text-xs sm:text-sm mb-4 leading-relaxed">
+              Hosting a community car boot event where public cars (£20), small businesses (£50), and food vendors (£100) rent pitch space. Combined with admission fees and raffles, it delivers single-day impact.
+            </p>
+            <div class="bg-amber-50 border border-amber-200 p-3 rounded-lg text-xs text-amber-800 font-medium mb-4">
+              📍 <strong>Motherwell Venue Search:</strong> We are actively seeking a suitable large car park or school space around Motherwell to host safely.
+            </div>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-500 mb-2 text-center">Projected Car Boot Revenue Breakdown</div>
+            <div class="chart-container">
+              <canvas id="carBootChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Sponsor ROI & Community Lifecycle -->
+  <section id="roi" class="py-16 bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-red-600 text-xs font-black uppercase tracking-widest">Mutual Value Creation</span>
+        <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mt-1 mb-4 uppercase">Win-Win Sponsor Lifecycle</h2>
+        <p class="text-slate-600 text-sm sm:text-base">
+          This section illustrates how sponsor investments circulate through the club to generate continuous return on investment, brand goodwill, and social media engagement.
+        </p>
+      </div>
+
+      <!-- 5-Step Infographic Timeline -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-16">
+        <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl text-center flex flex-col items-center shadow-sm">
+          <div class="w-10 h-10 rounded-full bg-red-600 text-white font-black flex items-center justify-center mb-3 text-sm">01</div>
+          <h4 class="font-bold text-slate-900 text-sm mb-1">Local Business</h4>
+          <p class="text-xs text-slate-500">Pledges sponsorship package or buys football card square</p>
+        </div>
+        <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl text-center flex flex-col items-center shadow-sm">
+          <div class="w-10 h-10 rounded-full bg-slate-900 text-white font-black flex items-center justify-center mb-3 text-sm">02</div>
+          <h4 class="font-bold text-slate-900 text-sm mb-1">Team Kitted</h4>
+          <p class="text-xs text-slate-500">Sideline jackets & essential gear acquired for winter</p>
+        </div>
+        <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl text-center flex flex-col items-center shadow-sm">
+          <div class="w-10 h-10 rounded-full bg-amber-500 text-slate-900 font-black flex items-center justify-center mb-3 text-sm">03</div>
+          <h4 class="font-bold text-slate-900 text-sm mb-1">Network Reach</h4>
+          <p class="text-xs text-slate-500">200+ local families see partner branding online & at games</p>
+        </div>
+        <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl text-center flex flex-col items-center shadow-sm">
+          <div class="w-10 h-10 rounded-full bg-red-600 text-white font-black flex items-center justify-center mb-3 text-sm">04</div>
+          <h4 class="font-bold text-slate-900 text-sm mb-1">Custom Leads</h4>
+          <p class="text-xs text-slate-500">Community chooses sponsored services over competitors</p>
+        </div>
+        <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl text-center flex flex-col items-center shadow-sm">
+          <div class="w-10 h-10 rounded-full bg-emerald-600 text-white font-black flex items-center justify-center mb-3 text-sm">05</div>
+          <h4 class="font-bold text-slate-900 text-sm mb-1">Sustainable Growth</h4>
+          <p class="text-xs text-slate-500">Tax deduction benefits and long-term partnership renewal</p>
+        </div>
+      </div>
+
+      <!-- Social Media & Promo Spotlight Mockup -->
+      <div class="bg-slate-900 text-white rounded-2xl p-6 sm:p-10 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8">
+        <div class="space-y-4 max-w-2xl">
+          <span class="text-xs font-black text-amber-400 uppercase tracking-widest">Digital Marketing Spotlight Sample</span>
+          <h3 class="text-2xl sm:text-3xl font-black text-white">Social Media & Visual Promotion</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            "Big shout-out to Auto-Fix Garage Motherwell, our newest Gold Partner! They're keeping our community safe on the road while equipping the girls with winter jackets. Need a service? Show them local love!"
+          </p>
+          <div class="flex flex-wrap gap-2 text-xs font-bold text-red-400">
+            <span>#HolytownColts</span>
+            <span>•</span>
+            <span>#SupportLocalMotherwell</span>
+            <span>•</span>
+            <span>#GirlsInSport</span>
+          </div>
+        </div>
+        
+        <div class="w-full lg:w-80 bg-slate-800 border border-slate-700 p-5 rounded-xl text-center shrink-0">
+          <div class="text-4xl mb-2">📸</div>
+          <div class="font-bold text-white text-sm">Player-Led Content Creation</div>
+          <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+            Players gain confidence producing promotional video interviews, social posts, and photoshoot updates for sponsor businesses.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Next Steps & Interactive Partner Inquiry Hub -->
+  <section id="action" class="py-16 bg-slate-50 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-red-600 text-xs font-black uppercase tracking-widest">Making It Happen</span>
+        <h2 class="text-3xl sm:text-5xl font-black text-slate-900 mt-1 mb-4 uppercase">Next Steps For Everyone</h2>
+        <p class="text-slate-600 text-sm sm:text-base">
+          This section outlines how parents, coaches, and local business owners can take immediate action to help us achieve our £3,000 seasonal goal.
+        </p>
+      </div>
+
+      <!-- Action Items Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+          <div class="text-3xl mb-3">💬</div>
+          <h4 class="font-black text-slate-900 text-base mb-2">1. Start Conversations</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Present this plan to your employer, household service providers, or favorite local Motherwell cafes and garages.
+          </p>
+        </div>
+
+        <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+          <div class="text-3xl mb-3">⚡</div>
+          <h4 class="font-black text-slate-900 text-base mb-2">2. Review Household Bills</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Check the UW Connector link to potentially lower household bills while securing up to £150 for the team.
+          </p>
+        </div>
+
+        <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+          <div class="text-3xl mb-3">🚗</div>
+          <h4 class="font-black text-slate-900 text-base mb-2">3. Hunt For A Venue</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Help us locate a large, safe outdoor car park or school ground in Motherwell for our single-day Team Car Boot Sale.
+          </p>
+        </div>
+
+        <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+          <div class="text-3xl mb-3">🌟</div>
+          <h4 class="font-black text-slate-900 text-base mb-2">4. Empower The Players</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Support girls going out in groups of 3 with coaches to pitch local businesses or run team media operations.
+          </p>
+        </div>
+      </div>
+
+      <!-- Interactive Partner Pledge Form -->
+      <div class="max-w-2xl mx-auto bg-white border-2 border-slate-200 rounded-2xl p-6 sm:p-10 shadow-md">
+        <h3 class="text-2xl font-black text-slate-900 text-center mb-2">Express Interest Or Pledge Support</h3>
+        <p class="text-xs text-slate-500 text-center mb-6">Select your preferred pathway to support Holytown Colts Girls 2015s.</p>
+
+        <form id="contactSimulatorForm" class="space-y-4">
+          <div>
+            <label class="block text-xs font-extrabold text-slate-700 mb-1">Your Name / Business Name</label>
+            <input type="text" required placeholder="e.g. John Smith / Smith Auto Repairs" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-red-600">
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-extrabold text-slate-700 mb-1">Contact Email / Phone</label>
+              <input type="text" required placeholder="contact@domain.com" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-red-600">
+            </div>
+            <div>
+              <label class="block text-xs font-extrabold text-slate-700 mb-1">Preferred Initiative</label>
+              <select class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-red-600">
+                <option>Business Football Card (£50)</option>
+                <option>Partnership Tier (£50 - £1,000)</option>
+                <option>UW Household Utility Review</option>
+                <option>Car Boot Pitch / Venue Support</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-3 rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-red-600/20 transition-all">
+            Submit Support Inquiry
+          </button>
+        </form>
+
+        <div id="formSuccessMsg" class="hidden mt-4 text-center text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 p-4 rounded-lg">
+          🎉 Thank you for supporting Holytown Colts G2015s! A team coordinator will reach out shortly.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-white py-12 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center space-x-3">
+        <span class="text-2xl">⚽</span>
+        <div>
+          <div class="text-sm font-extrabold text-white">Holytown Colts Girls 2015s</div>
+          <div class="text-xs text-slate-400">Strategic Sponsorship & Grassroots Plan</div>
+        </div>
+      </div>
+      <div class="text-xs font-black uppercase tracking-widest text-amber-400">
+        USE FOOTBALL TO DRIVE THEIR FUTURE!
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      
+      // Mobile Navigation Menu Toggle
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      mobileMenuBtn.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+
+      // Close mobile menu when clicking menu links
+      document.querySelectorAll('#mobileMenu a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+        });
+      });
+
+      // Chart.js Label Line-Wrapping Helper Callback Logic
+      const tooltipConfig = {
+        plugins: {
+          tooltip: {
+            callbacks: {
+              title: function(tooltipItems) {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                return Array.isArray(label) ? label.join(' ') : label;
+              }
+            }
+          }
+        }
+      };
+
+      // Chart 1: Fund Allocation Doughnut Chart
+      const ctxFund = document.getElementById('fundAllocationChart').getContext('2d');
+      new Chart(ctxFund, {
+        type: 'doughnut',
+        data: {
+          labels: [
+            ['Winter Sideline', 'Jackets (£1,200)'],
+            ['Home & Away', 'Match Kits (£1,000)'],
+            ['Training Gear &', 'Equipment (£500)'],
+            ['Team Events &', 'Trips (£300)']
+          ],
+          datasets: [{
+            data: [1200, 1000, 500, 300],
+            backgroundColor: ['#DC2626', '#111827', '#F59E0B', '#10B981'],
+            borderWidth: 2,
+            borderColor: '#FFFFFF'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            ...tooltipConfig.plugins,
+            legend: {
+              position: 'bottom',
+              labels: { color: '#334155', font: { size: 10, weight: 'bold' } }
+            }
+          }
+        }
+      });
+
+      // Chart 2: Football Scratch Card Comparison
+      const ctxCard = document.getElementById('scratchCardChart').getContext('2d');
+      new Chart(ctxCard, {
+        type: 'bar',
+        data: {
+          labels: [
+            ['Family Scratch', 'Card (£40 Return)'],
+            ['Business Football', 'Card (£1k Return)']
+          ],
+          datasets: [{
+            label: 'Funds Raised for Team (£)',
+            data: [40, 1000],
+            backgroundColor: ['#94A3B8', '#DC2626'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          ...tooltipConfig,
+          scales: {
+            y: { ticks: { color: '#64748B' }, grid: { color: '#E2E8F0' } },
+            x: { ticks: { color: '#334155', font: { weight: 'bold' } }, grid: { display: false } }
+          },
+          plugins: {
+            ...tooltipConfig.plugins,
+            legend: { display: false }
+          }
+        }
+      });
+
+      // Chart 3: Partnership Tier Comparison Chart
+      const ctxTier = document.getElementById('partnershipTierChart').getContext('2d');
+      new Chart(ctxTier, {
+        type: 'bar',
+        data: {
+          labels: [
+            ['Crafters & Small', 'Business'],
+            ['Local & Retail', 'Business'],
+            ['High Value', 'Services']
+          ],
+          datasets: [
+            { label: '3 Months (£)', data: [50, 90, 350], backgroundColor: '#DC2626' },
+            { label: '6 Months (£)', data: [90, 250, 600], backgroundColor: '#111827' },
+            { label: '12 Months (£)', data: [175, 450, 1000], backgroundColor: '#F59E0B' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          ...tooltipConfig,
+          scales: {
+            y: { ticks: { color: '#64748B' }, grid: { color: '#E2E8F0' } },
+            x: { ticks: { color: '#334155', font: { weight: 'bold' } }, grid: { display: false } }
+          },
+          plugins: {
+            ...tooltipConfig.plugins,
+            legend: { position: 'top', labels: { color: '#334155', font: { size: 10, weight: 'bold' } } }
+          }
+        }
+      });
+
+      // Chart 4: Car Boot Revenue Stream Breakdown
+      const ctxCar = document.getElementById('carBootChart').getContext('2d');
+      new Chart(ctxCar, {
+        type: 'bar',
+        data: {
+          labels: [
+            ['Public Pitch', '(50 @ £20)'],
+            ['Business Pitch', '(20 @ £50)'],
+            ['Food Vendors', '(3 @ £100)'],
+            ['Visitor Entry', '(250 @ £1)'],
+            ['Raffles & Cards', '(Misc Items)']
+          ],
+          datasets: [{
+            label: 'Projected Revenue (£)',
+            data: [1000, 1000, 300, 250, 250],
+            backgroundColor: '#F59E0B',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          ...tooltipConfig,
+          scales: {
+            x: { ticks: { color: '#64748B' }, grid: { color: '#E2E8F0' } },
+            y: { ticks: { color: '#334155', font: { weight: 'bold' } }, grid: { display: false } }
+          },
+          plugins: {
+            ...tooltipConfig.plugins,
+            legend: { display: false }
+          }
+        }
+      });
+
+      // Dynamic Goal Calculator Logic
+      const cardSlider = document.getElementById('cardSlider');
+      const tierSlider = document.getElementById('tierSlider');
+      const uwSlider = document.getElementById('uwSlider');
+      const carBootBtn = document.getElementById('carBootBtn');
+
+      const cardCountVal = document.getElementById('cardCountVal');
+      const tierCountVal = document.getElementById('tierCountVal');
+      const uwCountVal = document.getElementById('uwCountVal');
+      const carBootVal = document.getElementById('carBootVal');
+      const totalCalcDisplay = document.getElementById('totalCalcDisplay');
+      const calcProgressBar = document.getElementById('calcProgressBar');
+      const calcStatusText = document.getElementById('calcStatusText');
+      const calcJacketsCovered = document.getElementById('calcJacketsCovered');
+
+      let carBootActive = true;
+
+      function updateCalc() {
+        const cards = parseInt(cardSlider.value, 10);
+        const tiers = parseInt(tierSlider.value, 10);
+        const uws = parseInt(uwSlider.value, 10);
+
+        const cardRev = cards * 50;
+        const tierRev = tiers * 300;
+        const uwRev = uws * 150;
+        const carBootRev = carBootActive ? 2500 : 0;
+
+        const total = cardRev + tierRev + uwRev + carBootRev;
+
+        cardCountVal.textContent = cards + ' teams (£' + cardRev.toLocaleString() + ')';
+        tierCountVal.textContent = tiers + ' packages (£' + tierRev.toLocaleString() + ')';
+        uwCountVal.textContent = uws + ' switches (£' + uwRev.toLocaleString() + ')';
+        carBootVal.textContent = carBootActive ? 'Yes (£2,500 net)' : 'No (£0)';
+
+        totalCalcDisplay.textContent = '£' + total.toLocaleString();
+
+        const pct = Math.min(100, Math.round((total / 3000) * 100));
+        calcProgressBar.style.width = pct + '%';
+
+        if (total >= 3000) {
+          const surplus = total - 3000;
+          calcStatusText.textContent = '🎉 Target Achieved! £' + surplus.toLocaleString() + ' surplus generated for extra player tournaments & trips!';
+          calcStatusText.className = 'text-xs font-bold text-emerald-400 leading-relaxed bg-slate-800/80 p-3 rounded-lg border border-slate-700';
+          calcJacketsCovered.textContent = '100% Guaranteed';
+          calcJacketsCovered.className = 'text-emerald-400 font-bold';
+        } else {
+          const deficit = 3000 - total;
+          calcStatusText.textContent = '⚡ £' + deficit.toLocaleString() + ' remaining to reach the £3,000 seasonal target.';
+          calcStatusText.className = 'text-xs font-bold text-amber-400 leading-relaxed bg-slate-800/80 p-3 rounded-lg border border-slate-700';
+          const coveredPct = Math.round((total / 3000) * 100);
+          calcJacketsCovered.textContent = coveredPct + '% Covered';
+          calcJacketsCovered.className = 'text-amber-400 font-bold';
+        }
+      }
+
+      cardSlider.addEventListener('input', updateCalc);
+      tierSlider.addEventListener('input', updateCalc);
+      uwSlider.addEventListener('input', updateCalc);
+
+      carBootBtn.addEventListener('click', function() {
+        carBootActive = !carBootActive;
+        if (carBootActive) {
+          carBootBtn.className = 'bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition-colors shadow-sm';
+        } else {
+          carBootBtn.className = 'bg-slate-300 hover:bg-slate-400 text-slate-700 font-bold px-4 py-2 rounded-lg text-xs transition-colors shadow-sm';
+        }
+        updateCalc();
+      });
+
+      updateCalc();
+
+      // Form Handler Simulator
+      const form = document.getElementById('contactSimulatorForm');
+      const formSuccessMsg = document.getElementById('formSuccessMsg');
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        formSuccessMsg.classList.remove('hidden');
+        form.reset();
+      });
+    });
+  </script>
+</body>
+</html>
